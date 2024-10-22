@@ -26,13 +26,16 @@ func main() {
 	router := mux.NewRouter()
 
 	// Middleware for logging and authentication
-	router.Use(middleware.LoggingMiddleware)
-	router.Use(middleware.AuthenticationMiddleware)
+	//router.Use(middleware.LoggingMiddleware)
+	//router.Use(middleware.AuthenticationMiddleware)
 
 	// Define routes
 	router.HandleFunc("/register", controllers.RegisterUser).Methods("POST")
 	router.HandleFunc("/login", controllers.LoginUser).Methods("POST")
-	router.HandleFunc("/profile/{id}", controllers.UpdateProfile).Methods("PUT")
+
+	protected := router.PathPrefix("/").Subrouter()
+	protected.Use(middleware.AuthenticationMiddleware)
+	protected.HandleFunc("/profile/{id}", controllers.UpdateProfile).Methods("PUT")
 
 	// Serve the application
 	log.Printf("Server starting on port %s ...", os.Getenv("PORT"))
