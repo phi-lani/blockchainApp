@@ -1,4 +1,3 @@
-// database/database.go
 package database
 
 import (
@@ -12,7 +11,6 @@ import (
 
 var DB *gorm.DB
 
-// InitializeDB - Connects to the PostgreSQL database
 func InitializeDB() {
 	dsn := os.Getenv("DB")
 	var err error
@@ -21,8 +19,7 @@ func InitializeDB() {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
-	// Auto-migrate all models (this creates tables if they don't exist)
-	err = DB.AutoMigrate(&models.User{}) // Add all models that need to be migrated
+	err = DB.AutoMigrate(&models.User{}, &models.MFAToken{})
 	if err != nil {
 		log.Fatalf("Failed to migrate database: %v", err)
 	}
